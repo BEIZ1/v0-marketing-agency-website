@@ -132,7 +132,7 @@ export function Footer() {
               href="#"
               className="inline-block text-2xl font-bold tracking-tight text-foreground transition-colors hover:text-primary"
             >
-              BEIZ <span className="font-light">Studio</span>
+              BEIZ <span className="font-light">Marketing agency</span>
             </a>
             <p className="mt-4 max-w-sm text-muted-foreground">
               A premium creative agency delivering exceptional content,
@@ -142,14 +142,7 @@ export function Footer() {
             {/* Social links */}
             <div className="mt-6 flex items-center gap-3">
               {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary"
-                  aria-label={social.label}
-                >
-                  <social.icon className="h-5 w-5" />
-                </a>
+                null
               ))}
             </div>
           </div>
