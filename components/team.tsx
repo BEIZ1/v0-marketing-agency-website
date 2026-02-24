@@ -113,7 +113,7 @@ export function Team() {
           </div>
 
           {/* Right column - Team cards */}
-          <div className="space-y-4">
+          <div className="space-y-4 lg:pt-12">
             {teamMembers.map((member, index) => (
               <div
                 key={member.name}
