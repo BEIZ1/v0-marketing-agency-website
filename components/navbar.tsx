@@ -114,7 +114,7 @@ export function Navbar() {
             </div>
             <Button
               asChild
-              className="bg-primary text-primary-foreground hover:bg-primary/90 glow"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 glow transition-all duration-300 hover:scale-[1.03] hover:shadow-xl hover:shadow-primary/20 active:scale-[0.97]"
             >
               <a href="#brief">Get a Quote</a>
             </Button>

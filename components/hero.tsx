@@ -3,6 +3,37 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAnimatedCounter } from "@/hooks/use-animated-counter";
+
+function AnimatedStat({
+  end,
+  prefix,
+  suffix,
+  label,
+  delay,
+}: {
+  end: number;
+  prefix?: string;
+  suffix?: string;
+  label: string;
+  delay: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const display = useAnimatedCounter(ref, { end, prefix, suffix, duration: 2000 });
+
+  return (
+    <div
+      ref={ref}
+      className="text-center opacity-0 animate-fade-in-up"
+      style={{ animationDelay: `${delay}ms`, animationFillMode: "forwards" }}
+    >
+      <div className="text-3xl font-bold text-foreground sm:text-4xl">
+        {display}
+      </div>
+      <div className="mt-1 text-sm text-muted-foreground">{label}</div>
+    </div>
+  );
+}
 
 export function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -62,7 +93,7 @@ export function Hero() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center text-center">
           {/* Badge */}
-          <div className="animate-fade-in mb-8 inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-4 py-2 text-sm backdrop-blur-sm">
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-4 py-2 text-sm backdrop-blur-sm opacity-0 animate-fade-in-up" style={{ animationDelay: "100ms", animationFillMode: "forwards" }}>
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
@@ -73,7 +104,7 @@ export function Hero() {
           </div>
 
           {/* Main headline */}
-          <h1 className="animate-fade-in animation-delay-100 max-w-5xl text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+          <h1 className="max-w-5xl text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl opacity-0 animate-fade-in-up" style={{ animationDelay: "250ms", animationFillMode: "forwards" }}>
             <span className="text-foreground">We craft </span>
             <span className="gradient-text">digital experiences</span>
             <br />
@@ -110,7 +141,7 @@ export function Hero() {
           </h1>
 
           {/* Subheadline */}
-          <p className="animate-fade-in animation-delay-200 mx-auto mt-8 max-w-2xl text-lg text-muted-foreground sm:text-xl">
+          <p className="mx-auto mt-8 max-w-2xl text-lg text-muted-foreground sm:text-xl opacity-0 animate-fade-in-up" style={{ animationDelay: "450ms", animationFillMode: "forwards" }}>
             Content production, design, and web development — delivered with{" "}
             <span className="text-foreground font-medium">speed</span>,{" "}
             <span className="text-foreground font-medium">quality</span>, and{" "}
@@ -118,11 +149,11 @@ export function Hero() {
           </p>
 
           {/* CTAs */}
-          <div className="animate-fade-in animation-delay-300 mt-10 flex flex-col items-center gap-4 sm:flex-row sm:gap-6">
+          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:gap-6 opacity-0 animate-fade-in-up" style={{ animationDelay: "600ms", animationFillMode: "forwards" }}>
             <Button
               asChild
               size="lg"
-              className="group bg-primary text-primary-foreground hover:bg-primary/90 glow px-8"
+              className="group bg-primary text-primary-foreground hover:bg-primary/90 glow px-8 transition-all duration-300 hover:scale-[1.03] hover:shadow-xl hover:shadow-primary/20 active:scale-[0.98]"
             >
               <a href="#brief">
                 Request a Brief
@@ -133,7 +164,7 @@ export function Hero() {
               asChild
               variant="outline"
               size="lg"
-              className="group border-border bg-transparent text-foreground hover:bg-secondary hover:text-foreground px-8"
+              className="group border-border bg-transparent text-foreground hover:bg-secondary hover:text-foreground px-8 transition-all duration-300 hover:scale-[1.03] active:scale-[0.98]"
             >
               <a href="#work">
                 <Play className="mr-2 h-4 w-4" />
@@ -143,22 +174,11 @@ export function Hero() {
           </div>
 
           {/* Stats */}
-          <div className="animate-fade-in animation-delay-400 mt-20 grid grid-cols-2 gap-8 sm:grid-cols-4 lg:gap-16">
-            {[
-              { value: "50+", label: "Projects Delivered" },
-              { value: "98%", label: "Client Satisfaction" },
-              { value: "3x", label: "Average ROI" },
-              { value: "<48h", label: "Response Time" },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="text-3xl font-bold text-foreground sm:text-4xl">
-                  {stat.value}
-                </div>
-                <div className="mt-1 text-sm text-muted-foreground">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
+          <div className="mt-20 grid grid-cols-2 gap-8 sm:grid-cols-4 lg:gap-16">
+            <AnimatedStat end={50} suffix="+" label="Projects Delivered" delay={800} />
+            <AnimatedStat end={98} suffix="%" label="Client Satisfaction" delay={950} />
+            <AnimatedStat end={3} suffix="x" label="Average ROI" delay={1100} />
+            <AnimatedStat end={48} prefix="<" suffix="h" label="Response Time" delay={1250} />
           </div>
         </div>
 

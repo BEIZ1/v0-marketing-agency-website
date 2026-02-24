@@ -342,7 +342,7 @@ export function Portfolio() {
               type="button"
               onClick={() => setActiveFilter(filter)}
               className={cn(
-                "rounded-full px-5 py-2 text-sm font-medium transition-all duration-300",
+                "rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 hover:scale-[1.05] active:scale-[0.95]",
                 activeFilter === filter
                   ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
                   : "bg-secondary text-muted-foreground hover:bg-secondary/80 hover:text-foreground"
@@ -359,7 +359,7 @@ export function Portfolio() {
             <div
               key={project.id}
               className={cn(
-                "group relative overflow-hidden rounded-2xl glass-card transition-all duration-500 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10",
+                "group relative overflow-hidden rounded-2xl glass-card transition-all duration-500 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 hover:scale-[1.02]",
                 isInView
                   ? "translate-y-0 opacity-100"
                   : "translate-y-8 opacity-0"
@@ -378,7 +378,7 @@ export function Portfolio() {
                   <button
                     type="button"
                     onClick={() => handleViewCase(project)}
-                    className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-transform hover:scale-105"
+                    className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30 active:scale-95"
                   >
                     View case
                     <ArrowUpRight className="h-4 w-4" />

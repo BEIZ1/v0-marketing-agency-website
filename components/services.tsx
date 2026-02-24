@@ -162,7 +162,7 @@ export function Services() {
               type="button"
               onClick={() => setSelectedService(service)}
               className={cn(
-                "group relative overflow-hidden rounded-2xl glass-card p-8 text-left transition-all duration-500 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 cursor-pointer",
+                "group relative overflow-hidden rounded-2xl glass-card p-8 text-left transition-all duration-500 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 hover:scale-[1.02] cursor-pointer",
                 isInView
                   ? "translate-y-0 opacity-100"
                   : "translate-y-8 opacity-0"

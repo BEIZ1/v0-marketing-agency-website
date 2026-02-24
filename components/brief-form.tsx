@@ -473,7 +473,7 @@ export function BriefForm() {
                     type="submit"
                     size="lg"
                     disabled={isSubmitting}
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90 glow"
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90 glow transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-primary/20 active:scale-[0.98]"
                   >
                     {isSubmitting ? (
                       <>
