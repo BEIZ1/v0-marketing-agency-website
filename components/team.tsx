@@ -3,7 +3,28 @@
 import { useRef } from "react";
 import { Linkedin, Twitter, Dribbble } from "lucide-react";
 import { useInView } from "@/hooks/use-in-view";
+import { useAnimatedCounter } from "@/hooks/use-animated-counter";
 import { cn } from "@/lib/utils";
+
+function TeamStat({
+  end,
+  suffix,
+  label,
+}: {
+  end: number;
+  suffix?: string;
+  label: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const display = useAnimatedCounter(ref, { end, suffix, duration: 1800 });
+
+  return (
+    <div ref={ref}>
+      <div className="text-3xl font-bold text-foreground">{display}</div>
+      <div className="text-sm text-muted-foreground">{label}</div>
+    </div>
+  );
+}
 
 const teamMembers = [
   {
@@ -89,36 +110,21 @@ export function Team() {
               our clients, not just service providers.
             </p>
             <div className="mt-8 flex items-center gap-8">
-              <div>
-                <div className="text-3xl font-bold text-foreground">50+</div>
-                <div className="text-sm text-muted-foreground">
-                  Projects completed
-                </div>
-              </div>
+              <TeamStat end={50} suffix="+" label="Projects completed" />
               <div className="h-12 w-px bg-border" />
-              <div>
-                <div className="text-3xl font-bold text-foreground">12</div>
-                <div className="text-sm text-muted-foreground">
-                  Countries served
-                </div>
-              </div>
+              <TeamStat end={12} label="Countries served" />
               <div className="h-12 w-px bg-border" />
-              <div>
-                <div className="text-3xl font-bold text-foreground">3</div>
-                <div className="text-sm text-muted-foreground">
-                  Years in business
-                </div>
-              </div>
+              <TeamStat end={3} label="Years in business" />
             </div>
           </div>
 
           {/* Right column - Team cards */}
-          <div className="space-y-4">
+          <div className="space-y-4 lg:pt-12">
             {teamMembers.map((member, index) => (
               <div
                 key={member.name}
                 className={cn(
-                  "group glass-card rounded-2xl p-6 transition-all duration-500 hover:border-primary/50",
+                  "group glass-card rounded-2xl p-6 transition-all duration-500 hover:border-primary/50 hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/10",
                   isInView
                     ? "translate-y-0 opacity-100"
                     : "translate-y-8 opacity-0"

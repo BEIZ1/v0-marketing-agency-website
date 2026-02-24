@@ -92,7 +92,7 @@ export function Footer() {
               key={contact.label}
               href={contact.href}
               className={cn(
-                "group glass-card rounded-2xl p-6 transition-all duration-500 hover:border-primary/50",
+                "group glass-card rounded-2xl p-6 transition-all duration-500 hover:border-primary/50 hover:scale-[1.03] hover:shadow-lg hover:shadow-primary/10",
                 isInView
                   ? "translate-y-0 opacity-100"
                   : "translate-y-8 opacity-0"
@@ -156,7 +156,7 @@ export function Footer() {
                   <li key={link.label}>
                     <a
                       href={link.href}
-                      className="text-muted-foreground transition-colors hover:text-primary"
+                      className="text-muted-foreground transition-colors hover:text-primary relative after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
                     >
                       {link.label}
                     </a>

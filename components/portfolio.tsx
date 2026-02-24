@@ -1,15 +1,19 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ArrowUpRight, TrendingUp, X, ExternalLink, Globe, Github, FigmaIcon, HardDrive, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowUpRight, TrendingUp, ExternalLink, Globe, Github, FigmaIcon, HardDrive, ChevronLeft, ChevronRight } from "lucide-react";
 import { useInView } from "@/hooks/use-in-view";
 import { cn } from "@/lib/utils";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const filters = ["All", "Content", "Design", "Web"];
 
@@ -260,7 +264,6 @@ export function Portfolio() {
   const isInView = useInView(sectionRef, { threshold: 0.1 });
   const [activeFilter, setActiveFilter] = useState("All");
   const [selectedCase, setSelectedCase] = useState<CaseStudy | null>(null);
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const filteredProjects =
     activeFilter === "All"
@@ -269,11 +272,10 @@ export function Portfolio() {
 
   const handleViewCase = (project: CaseStudy) => {
     setSelectedCase(project);
-    setIsSheetOpen(true);
   };
 
-  const handleCloseSheet = () => {
-    setIsSheetOpen(false);
+  const handleCloseDialog = () => {
+    setSelectedCase(null);
   };
 
   const handleNavigateCase = (direction: "prev" | "next") => {
@@ -340,7 +342,7 @@ export function Portfolio() {
               type="button"
               onClick={() => setActiveFilter(filter)}
               className={cn(
-                "rounded-full px-5 py-2 text-sm font-medium transition-all duration-300",
+                "rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 hover:scale-[1.05] active:scale-[0.95]",
                 activeFilter === filter
                   ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
                   : "bg-secondary text-muted-foreground hover:bg-secondary/80 hover:text-foreground"
@@ -357,7 +359,7 @@ export function Portfolio() {
             <div
               key={project.id}
               className={cn(
-                "group relative overflow-hidden rounded-2xl glass-card transition-all duration-500 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10",
+                "group relative overflow-hidden rounded-2xl glass-card transition-all duration-500 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 hover:scale-[1.02]",
                 isInView
                   ? "translate-y-0 opacity-100"
                   : "translate-y-8 opacity-0"
@@ -376,7 +378,7 @@ export function Portfolio() {
                   <button
                     type="button"
                     onClick={() => handleViewCase(project)}
-                    className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-transform hover:scale-105"
+                    className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30 active:scale-95"
                   >
                     View case
                     <ArrowUpRight className="h-4 w-4" />
@@ -422,221 +424,214 @@ export function Portfolio() {
         </div>
       </div>
 
-      {/* Case Details Sheet */}
-      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent 
-          side="right" 
-          className="w-full sm:max-w-2xl glass-card border-l border-border p-0 overflow-hidden"
-        >
-          {selectedCase && (
-            <div className="flex h-full flex-col">
-              {/* Header with navigation */}
-              <SheetHeader className="sticky top-0 z-10 glass-card border-b border-border px-6 py-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => handleNavigateCase("prev")}
-                      className="h-8 w-8 rounded-full"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => handleNavigateCase("next")}
-                      className="h-8 w-8 rounded-full"
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                  </div>
+      {/* Case Details Dialog */}
+      <Dialog
+        open={!!selectedCase}
+        onOpenChange={(open) => {
+          if (!open) handleCloseDialog();
+        }}
+      >
+        {selectedCase && (
+          <DialogContent className="glass-card max-w-3xl max-h-[90vh] overflow-y-auto p-0 gap-0">
+            {/* Header with navigation */}
+            <DialogHeader className="sticky top-0 z-10 glass-card border-b border-border px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="icon"
-                    onClick={handleCloseSheet}
+                    onClick={() => handleNavigateCase("prev")}
                     className="h-8 w-8 rounded-full"
                   >
-                    <X className="h-4 w-4" />
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handleNavigateCase("next")}
+                    className="h-8 w-8 rounded-full"
+                  >
+                    <ChevronRight className="h-4 w-4" />
                   </Button>
                 </div>
-                
-                <div className="space-y-3 pt-4">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary" className="rounded-full">
-                      {selectedCase.category}
+              </div>
+              
+              <div className="space-y-3 pt-4">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge variant="secondary" className="rounded-full">
+                    {selectedCase.category}
+                  </Badge>
+                  {selectedCase.tags.map((tag) => (
+                    <Badge
+                      key={tag}
+                      variant="outline"
+                      className="rounded-full text-xs"
+                    >
+                      {tag}
                     </Badge>
-                    {selectedCase.tags.map((tag) => (
-                      <Badge
-                        key={tag}
-                        variant="outline"
-                        className="rounded-full text-xs"
-                      >
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                  <SheetTitle className="text-2xl font-bold tracking-tight">
-                    {selectedCase.title}
-                  </SheetTitle>
+                  ))}
                 </div>
-              </SheetHeader>
+                <DialogTitle className="text-2xl font-bold tracking-tight text-foreground">
+                  {selectedCase.title}
+                </DialogTitle>
+                <DialogDescription className="sr-only">
+                  {selectedCase.description}
+                </DialogDescription>
+              </div>
+            </DialogHeader>
 
-              {/* Scrollable content */}
-              <ScrollArea className="flex-1">
-                <div className="space-y-8 p-6">
-                  {/* Hero Gallery */}
-                  <div className="space-y-3">
+            {/* Content */}
+            <div className="space-y-8 p-6">
+              {/* Hero Gallery */}
+              <div className="space-y-3">
+                <div
+                  className="aspect-video w-full rounded-xl"
+                  style={{ background: selectedCase.image }}
+                />
+                <div className="grid grid-cols-2 gap-3">
+                  {selectedCase.gallery.slice(1).map((img, idx) => (
                     <div
-                      className="aspect-video w-full rounded-xl"
-                      style={{ background: selectedCase.image }}
+                      key={idx}
+                      className="aspect-video rounded-lg"
+                      style={{ background: img }}
                     />
-                    <div className="grid grid-cols-2 gap-3">
-                      {selectedCase.gallery.slice(1).map((img, idx) => (
-                        <div
-                          key={idx}
-                          className="aspect-video rounded-lg"
-                          style={{ background: img }}
-                        />
-                      ))}
-                    </div>
-                  </div>
+                  ))}
+                </div>
+              </div>
 
-                  {/* Summary */}
-                  <div className="space-y-3">
-                    <h3 className="text-lg font-semibold text-foreground">
-                      Project Overview
-                    </h3>
-                    <p className="text-muted-foreground leading-relaxed">
-                      {selectedCase.summary}
-                    </p>
-                  </div>
+              {/* Summary */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-semibold text-foreground">
+                  Project Overview
+                </h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  {selectedCase.summary}
+                </p>
+              </div>
 
-                  <Separator />
+              <Separator />
 
-                  {/* Highlights/Results */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-foreground">
-                      Results & Impact
-                    </h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      {selectedCase.highlights.map((highlight, idx) => (
-                        <div
-                          key={idx}
-                          className="rounded-xl border border-border bg-secondary/50 p-4"
-                        >
-                          <p className="text-2xl font-bold text-primary">
-                            {highlight.value}
-                          </p>
-                          <p className="mt-1 text-sm text-muted-foreground">
-                            {highlight.label}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  {/* Deliverables */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-foreground">
-                      Scope & Deliverables
-                    </h3>
-                    <ul className="space-y-2">
-                      {selectedCase.deliverables.map((item, idx) => (
-                        <li
-                          key={idx}
-                          className="flex items-start gap-3 text-sm text-muted-foreground"
-                        >
-                          <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Tech Stack (Web only) */}
-                  {selectedCase.techStack && (
-                    <>
-                      <Separator />
-                      <div className="space-y-4">
-                        <h3 className="text-lg font-semibold text-foreground">
-                          Technology Stack
-                        </h3>
-                        <div className="flex flex-wrap gap-2">
-                          {selectedCase.techStack.map((tech) => (
-                            <Badge
-                              key={tech}
-                              variant="secondary"
-                              className="rounded-full px-3 py-1"
-                            >
-                              {tech}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    </>
-                  )}
-
-                  <Separator />
-
-                  {/* Resources */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-foreground">
-                      Resources & Links
-                    </h3>
-                    <div className="grid gap-3">
-                      {selectedCase.resources.map((resource, idx) => (
-                        <a
-                          key={idx}
-                          href={resource.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-between rounded-xl border border-border bg-secondary/50 p-4 transition-colors hover:border-primary/50 hover:bg-secondary/80"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                              {getResourceIcon(resource.icon)}
-                            </div>
-                            <span className="font-medium text-foreground">
-                              {resource.label}
-                            </span>
-                          </div>
-                          <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  {/* CTA */}
-                  <div className="space-y-4 rounded-2xl border border-primary/20 bg-primary/5 p-6">
-                    <div>
-                      <h3 className="text-lg font-semibold text-foreground">
-                        Like what you see?
-                      </h3>
-                      <p className="mt-2 text-sm text-muted-foreground">
-                        {'Let\'s create something similar for your brand. Share your project details and we\'ll get back to you within 24 hours.'}
+              {/* Highlights/Results */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground">
+                  Results & Impact
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  {selectedCase.highlights.map((highlight, idx) => (
+                    <div
+                      key={idx}
+                      className="rounded-xl border border-border bg-secondary/50 p-4"
+                    >
+                      <p className="text-2xl font-bold text-primary">
+                        {highlight.value}
+                      </p>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        {highlight.label}
                       </p>
                     </div>
-                    <Button
-                      onClick={() => {
-                        handleCloseSheet();
-                        document.getElementById("brief")?.scrollIntoView({ behavior: "smooth" });
-                      }}
-                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90 glow"
-                    >
-                      Request a similar project
-                    </Button>
-                  </div>
+                  ))}
                 </div>
-              </ScrollArea>
+              </div>
+
+              <Separator />
+
+              {/* Deliverables */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground">
+                  Scope & Deliverables
+                </h3>
+                <ul className="space-y-2">
+                  {selectedCase.deliverables.map((item, idx) => (
+                    <li
+                      key={idx}
+                      className="flex items-start gap-3 text-sm text-muted-foreground"
+                    >
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Tech Stack (Web only) */}
+              {selectedCase.techStack && (
+                <>
+                  <Separator />
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-foreground">
+                      Technology Stack
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedCase.techStack.map((tech) => (
+                        <Badge
+                          key={tech}
+                          variant="secondary"
+                          className="rounded-full px-3 py-1"
+                        >
+                          {tech}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              <Separator />
+
+              {/* Resources */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground">
+                  Resources & Links
+                </h3>
+                <div className="grid gap-3">
+                  {selectedCase.resources.map((resource, idx) => (
+                    <a
+                      key={idx}
+                      href={resource.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between rounded-xl border border-border bg-secondary/50 p-4 transition-colors hover:border-primary/50 hover:bg-secondary/80"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                          {getResourceIcon(resource.icon)}
+                        </div>
+                        <span className="font-medium text-foreground">
+                          {resource.label}
+                        </span>
+                      </div>
+                      <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* CTA */}
+              <div className="space-y-4 rounded-2xl border border-primary/20 bg-primary/5 p-6">
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground">
+                    Like what you see?
+                  </h3>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {"Let's create something similar for your brand. Share your project details and we'll get back to you within 24 hours."}
+                  </p>
+                </div>
+                <Button
+                  onClick={() => {
+                    handleCloseDialog();
+                    document.getElementById("brief")?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90 glow"
+                >
+                  Order a Brief
+                </Button>
+              </div>
             </div>
-          )}
-        </SheetContent>
-      </Sheet>
+          </DialogContent>
+        )}
+      </Dialog>
     </section>
   );
 }

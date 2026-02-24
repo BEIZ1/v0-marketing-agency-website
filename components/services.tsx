@@ -1,11 +1,33 @@
 "use client";
 
-import { useRef } from "react";
-import { Film, Palette, Code, ArrowUpRight } from "lucide-react";
+import { useRef, useState } from "react";
+import { Film, Palette, Code, ArrowUpRight, CheckCircle2 } from "lucide-react";
 import { useInView } from "@/hooks/use-in-view";
 import { cn } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
-const services = [
+type Service = {
+  icon: typeof Film;
+  title: string;
+  description: string;
+  features: string[];
+  tags: string[];
+  details: {
+    longDescription: string;
+    process: string[];
+    whyUs: string[];
+  };
+};
+
+const services: Service[] = [
   {
     icon: Film,
     title: "Content Production",
@@ -17,6 +39,23 @@ const services = [
       "Motion graphics & animation",
     ],
     tags: ["Reels", "TikTok", "YouTube", "Photography"],
+    details: {
+      longDescription:
+        "We produce end-to-end content that resonates with your audience. From scripting and storyboarding through filming, editing, and post-production, every frame is crafted to communicate your brand's unique narrative and drive measurable engagement.",
+      process: [
+        "Discovery call & creative brief",
+        "Concept development & storyboarding",
+        "Production & filming",
+        "Post-production & motion graphics",
+        "Review, revisions & delivery",
+      ],
+      whyUs: [
+        "Cinematic quality on any budget",
+        "Fast turnaround without sacrificing polish",
+        "Platform-optimized formats (vertical, square, 16:9)",
+        "Full rights ownership included",
+      ],
+    },
   },
   {
     icon: Palette,
@@ -29,6 +68,23 @@ const services = [
       "Marketing collateral",
     ],
     tags: ["Branding", "UI/UX", "Print", "Packaging"],
+    details: {
+      longDescription:
+        "Great design is invisible -- it simply works. We build cohesive visual systems that unify your brand across every touchpoint, from your website and app to print materials and packaging. Our process is research-driven and rooted in user empathy.",
+      process: [
+        "Brand audit & competitor analysis",
+        "Moodboarding & visual direction",
+        "Logo, typography & color system",
+        "UI component library in Figma",
+        "Brand guidelines documentation",
+      ],
+      whyUs: [
+        "Systematic approach with reusable design tokens",
+        "Accessibility-first color and type decisions",
+        "Figma source files with developer handoff",
+        "Scalable design systems for growing teams",
+      ],
+    },
   },
   {
     icon: Code,
@@ -41,12 +97,30 @@ const services = [
       "Landing pages & MVPs",
     ],
     tags: ["Next.js", "React", "Headless CMS", "Shopify"],
+    details: {
+      longDescription:
+        "We engineer fast, scalable, and accessible web experiences that convert visitors into customers. Whether you need a marketing site, a full-stack SaaS product, or a headless e-commerce store, we deliver production-ready code with modern tooling.",
+      process: [
+        "Technical discovery & architecture planning",
+        "UI development with component library",
+        "Backend, API & database integration",
+        "Performance optimization & testing",
+        "Deployment, monitoring & handover",
+      ],
+      whyUs: [
+        "98+ Lighthouse scores as standard",
+        "SEO-optimized and Core Web Vitals friendly",
+        "CI/CD pipelines and automated testing",
+        "Clean, documented code you actually own",
+      ],
+    },
   },
 ];
 
 export function Services() {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { threshold: 0.1 });
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
 
   return (
     <section
@@ -83,10 +157,12 @@ export function Services() {
         {/* Service cards */}
         <div className="mt-16 grid gap-6 lg:grid-cols-3">
           {services.map((service, index) => (
-            <div
+            <button
               key={service.title}
+              type="button"
+              onClick={() => setSelectedService(service)}
               className={cn(
-                "group relative overflow-hidden rounded-2xl glass-card p-8 transition-all duration-500 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10",
+                "group relative overflow-hidden rounded-2xl glass-card p-8 text-left transition-all duration-500 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 hover:scale-[1.02] cursor-pointer",
                 isInView
                   ? "translate-y-0 opacity-100"
                   : "translate-y-8 opacity-0"
@@ -145,10 +221,93 @@ export function Services() {
                   <ArrowUpRight className="h-4 w-4" />
                 </div>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </div>
+
+      {/* Service Detail Modal */}
+      <Dialog
+        open={!!selectedService}
+        onOpenChange={(open) => {
+          if (!open) setSelectedService(null);
+        }}
+      >
+        {selectedService && (
+          <DialogContent className="glass-card max-w-2xl max-h-[85vh] overflow-y-auto p-0 gap-0">
+            {/* Header */}
+            <DialogHeader className="p-6 pb-0">
+              <div className="mb-4 inline-flex self-start rounded-xl bg-primary/10 p-3 text-primary">
+                <selectedService.icon className="h-6 w-6" />
+              </div>
+              <DialogTitle className="text-2xl font-bold tracking-tight text-foreground">
+                {selectedService.title}
+              </DialogTitle>
+              <DialogDescription className="text-base text-muted-foreground leading-relaxed mt-2">
+                {selectedService.details.longDescription}
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-6 p-6">
+              <Separator />
+
+              {/* Our Process */}
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                  Our Process
+                </h4>
+                <ol className="space-y-3">
+                  {selectedService.details.process.map((step, idx) => (
+                    <li key={idx} className="flex items-start gap-3">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                        {idx + 1}
+                      </span>
+                      <span className="text-sm text-foreground">{step}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+
+              <Separator />
+
+              {/* Why Us */}
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                  Why Work With Us
+                </h4>
+                <ul className="space-y-2">
+                  {selectedService.details.whyUs.map((point, idx) => (
+                    <li key={idx} className="flex items-start gap-2.5">
+                      <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5 text-primary" />
+                      <span className="text-sm text-foreground">{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <Separator />
+
+              {/* CTA */}
+              <div className="rounded-xl border border-primary/20 bg-primary/5 p-5">
+                <p className="text-sm text-muted-foreground">
+                  {"Ready to get started? Share your project details and we'll get back to you within 24 hours."}
+                </p>
+                <Button
+                  onClick={() => {
+                    setSelectedService(null);
+                    document
+                      .getElementById("brief")
+                      ?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="mt-3 w-full bg-primary text-primary-foreground hover:bg-primary/90 glow"
+                >
+                  Order a Brief
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        )}
+      </Dialog>
     </section>
   );
 }

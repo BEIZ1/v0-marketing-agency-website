@@ -46,7 +46,21 @@ const steps = [
 
 export function Process() {
   const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { threshold: 0.1 });
+  const isInView = useInView(sectionRef, { threshold: 0.05 });
+
+  // Individual step refs for progressive reveal
+  const stepRefs = [
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
+  ];
+  const stepInView = [
+    useInView(stepRefs[0], { threshold: 0.3, rootMargin: "0px 0px -10% 0px" }),
+    useInView(stepRefs[1], { threshold: 0.3, rootMargin: "0px 0px -10% 0px" }),
+    useInView(stepRefs[2], { threshold: 0.3, rootMargin: "0px 0px -10% 0px" }),
+    useInView(stepRefs[3], { threshold: 0.3, rootMargin: "0px 0px -10% 0px" }),
+  ];
 
   return (
     <section id="process" ref={sectionRef} className="relative py-24 lg:py-32">
@@ -90,15 +104,13 @@ export function Process() {
             {steps.map((step, index) => (
               <div
                 key={step.number}
+                ref={stepRefs[index]}
                 className={cn(
-                  "relative transition-all duration-700",
-                  isInView
+                  "relative transition-all duration-700 ease-out",
+                  stepInView[index]
                     ? "translate-y-0 opacity-100"
-                    : "translate-y-8 opacity-0"
+                    : "translate-y-12 opacity-0"
                 )}
-                style={{
-                  transitionDelay: isInView ? `${(index + 1) * 150}ms` : "0ms",
-                }}
               >
                 <div
                   className={cn(
@@ -113,7 +125,7 @@ export function Process() {
                       index % 2 === 0 ? "lg:pr-16" : "lg:pl-16"
                     )}
                   >
-                    <div className="group glass-card rounded-2xl p-6 transition-all duration-500 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 lg:p-8">
+                    <div className="group glass-card rounded-2xl p-6 transition-all duration-500 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 hover:scale-[1.02] lg:p-8">
                       <div className="flex items-start gap-4">
                         {/* Icon */}
                         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary/20">
@@ -164,13 +176,8 @@ export function Process() {
                     <div
                       className={cn(
                         "relative flex h-4 w-4 items-center justify-center transition-all duration-500",
-                        isInView ? "scale-100" : "scale-0"
+                        stepInView[index] ? "scale-100" : "scale-0"
                       )}
-                      style={{
-                        transitionDelay: isInView
-                          ? `${(index + 1) * 200}ms`
-                          : "0ms",
-                      }}
                     >
                       <span className="absolute h-full w-full animate-ping rounded-full bg-primary opacity-50" />
                       <span className="relative h-3 w-3 rounded-full bg-primary" />
